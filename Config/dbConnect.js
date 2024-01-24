@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const dbConnect = () => {
   mongoose.set('strictQuery', false);
 
-  const dbUrl = 'mongodb://localhost:27017/carInsuranceBackend';
+  // const dbUrl = 'mongodb://localhost:27017/carInsuranceBackend';
+  const dbUrl = 'mongodb+srv://Dagim:96nielPRG25lyYr8@cluster0.ifvnbab.mongodb.net/carInsurance';
+
   // const dbUrl = process.env.DB_URL
 
   mongoose
