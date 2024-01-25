@@ -57,3 +57,40 @@ module.exports.getUserProfileCtrl = asyncHandler(async (req, res) => {
     user,
   });
 });
+
+module.exports.changePassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+
+  // Check if newPassword and confirmPassword match
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'New password and confirm password do not match',
+    });
+  }
+
+  // Find the user by ID
+  const user = await User.findById(req.userAuthId);
+
+  // Check if the old password matches
+  const isMatch = await bcrypt.compare(oldPassword, user.password);
+  if (!isMatch) {
+    return res.status(401).json({
+      status: 'error',
+      message: 'Old password is incorrect',
+    });
+  }
+
+  // Hash the new password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+  // Update the user's password
+  user.password = hashedPassword;
+  await user.save();
+
+  res.json({
+    status: 'success',
+    message: 'Password changed successfully',
+  });
+});
