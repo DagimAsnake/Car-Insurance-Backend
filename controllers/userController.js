@@ -19,10 +19,14 @@ module.exports.registerUserCtrl = asyncHandler(async (req, res) => {
     email,
     password: hashedPassword,
   });
+  // Generate token for the user
+  const token = generateToken(user._id);
+
   res.status(201).json({
     status: 'success',
     message: 'User Registered Successfully',
     data: user,
+    token: token,
   });
 });
 
