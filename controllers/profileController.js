@@ -1,8 +1,16 @@
 const Profile = require('../model/Profile.js');
 const asyncHandler = require('express-async-handler');
 
+const setAuthToken = (req) => {
+  const token = req.headers['x-auth-token'];
+  if (token) {
+    req.userAuthId = token;
+  }
+};
 
 module.exports.createProfile = asyncHandler(async (req, res) => {
+
+   setAuthToken(req);
   const { firstName, lastName, phone, insurance, image } = req.body;
 
   const profile = await Profile.create({
@@ -23,6 +31,8 @@ module.exports.createProfile = asyncHandler(async (req, res) => {
 
 
 module.exports.getProfile = asyncHandler(async (req, res) => {
+
+  setAuthToken(req);
   const profile = await Profile.findOne({ user: req.userAuthId }).populate('user'); 
 
   if (!profile) {
@@ -41,6 +51,8 @@ module.exports.getProfile = asyncHandler(async (req, res) => {
 
 
 module.exports.updateProfile = asyncHandler(async (req, res) => {
+
+  setAuthToken(req);
   const { firstName, lastName, phone, insurance, image } = req.body;
 
   const profile = await Profile.findOneAndUpdate(
@@ -65,6 +77,7 @@ module.exports.updateProfile = asyncHandler(async (req, res) => {
 
 
 module.exports.deleteProfile = asyncHandler(async (req, res) => {
+  setAuthToken(req);
   const profile = await Profile.findOneAndDelete({ user: req.userAuthId });
 
   if (!profile) {
